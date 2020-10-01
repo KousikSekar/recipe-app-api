@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'core',
     'user',
     'rest_framework',
-    'rest_framework.authtoken'
+    'rest_framework.authtoken',
+    'recipe'
 
 ]
 
