@@ -49,6 +49,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.name
 
 
+
 class Tag(models.Model):
     """Tag model"""
     name = models.CharField(max_length=255)
