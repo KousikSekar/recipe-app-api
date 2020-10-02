@@ -8,7 +8,7 @@ from . import serializers
 
 
 # Create your views here.
-class TagViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+class TagViewSet(mixins.ListModelMixin, viewsets.GenericViewSet, mixins.CreateModelMixin):
     serializer_class = serializers.TagSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
@@ -17,3 +17,7 @@ class TagViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     def get_queryset(self):
         """overriding the queryset method to list the query objects"""
         return self.queryset.filter(user=self.request.user).order_by('-name')
+
+    def perform_create(self, serializer):
+        serializer.save(user= self.request.user)
+
