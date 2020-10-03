@@ -193,6 +193,30 @@ class PrivateRecipeAPITest(TestCase):
         self.assertEqual(recipe.time_minutes, payload['time_minutes'])
         self.assertEqual(recipe.price, payload['price'])
         self.assertEqual(len(tags), 0)
+        
+    def test_filter_recipe_by_tags(self):
+        recipe1 = sample_recipe(self.user, title='Potato curry')
+        recipe2 = sample_recipe(self.user, title='curd Rice')
+        tag1 = sample_tag(self.user, name='Vegan')
+        tag2 = sample_tag(self.user, name='Vegetarian')
+        recipe1.tags.add(tag1)
+        recipe2.tags.add(tag2)
+        recipe3 = sample_recipe(self.user, title='Briyani')
+
+        res = self.client.get(
+            RECIPE_URL,
+            {'tags':'{},{}'.format(tag1.id, tag2.id)}
+        )
+        serializer1 = RecipeSerializer(recipe1)
+        serializer2 = RecipeSerializer(recipe2)
+        serializer3 = RecipeSerializer(recipe3)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertIn(serializer1.data, res.data)
+        self.assertIn(serializer2.data, res.data)
+        self.assertNotIn(serializer3.data, res.data)
+
+
+
 
     class RecipeUploadImageTest(TestCase):
 
