@@ -1,9 +1,18 @@
+import uuid
+import os
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
 from django.conf import settings
+import pathlib
 
 
 # Create your models here.
+def recipe_image_life_path(instance, filename):
+    """create a new filename to upload the image"""
+    ext = filename.split('.')[-1]
+    filename = f'{uuid.uuid4()}.{ext}'
+    return pathlib.Path().joinpath('uploads/recipe', filename)
+    #  return os.path.join('uploads/recipe', filename)
 
 
 class MyUserManager(BaseUserManager):
@@ -57,6 +66,7 @@ class Tag(models.Model):
     def __str__(self):
         return self.name
 
+
 class Ingredient(models.Model):
     """Model to save the ingredients"""
     name = models.CharField(max_length=255)
@@ -64,7 +74,8 @@ class Ingredient(models.Model):
 
     def __str__(self):
         return self.name
-    
+
+
 class Recipe(models.Model):
     """Create a recipe model for each user"""
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -74,7 +85,7 @@ class Recipe(models.Model):
     link = models.CharField(max_length=255, blank=True)
     ingredient = models.ManyToManyField('Ingredient')
     tags = models.ManyToManyField('Tag')
+    image = models.ImageField(blank=True, upload_to=recipe_image_life_path)
 
     def __str__(self):
         return self.title
-

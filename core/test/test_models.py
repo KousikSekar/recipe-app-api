@@ -1,5 +1,7 @@
+from unittest.mock import patch
 from django.test import TestCase
 from django.contrib.auth import get_user_model
+from pathlib import Path
 from core import models
 
 
@@ -58,3 +60,13 @@ class ModelTest(TestCase):
             price = 50.00,
         )
         self.assertEqual(str(recipe), recipe.title)
+
+    @patch('uuid.uuid4')
+    def test_image_is_renamed_before_upload(self, mock_uuid):
+        uuid = 'Test_uuid'
+        mock_uuid.return_value = uuid
+        file_path = models.recipe_image_life_path(None, 'myimage.jpg')
+        exp_path = Path(f'uploads/recipe/{uuid}.jpg')
+        # Pathlib.Path is suited for windows , if you are using LINUX or mac  , use the os.path function
+        self.assertEqual(file_path, exp_path)
+
